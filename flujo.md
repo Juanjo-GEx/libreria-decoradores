@@ -6,3 +6,5 @@
 - ts-node src/index.ts
 - npm run build
 - npm publish
+- Hacer cambios y luego npm version patch
+- npm publish
