@@ -38,7 +38,7 @@ export const measureTime = (
 };
 
 // 3- Almacernar en caché la información de un valor
-type CacheObject = {
+export type CacheObject = {
   [key: string]: any;
 };
 export const cacheableMethod = (cache: CacheObject) => {

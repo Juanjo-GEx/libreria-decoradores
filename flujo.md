@@ -6,5 +6,10 @@
 - ts-node src/index.ts
 - npm run build
 - npm publish
-- Hacer cambios y luego npm version patch
-- npm publish
+- Hacer cambios
+  - npm run build
+  - npm version patch
+  - npm publish
+- npm i -D jest ts-jest @types/jest
+- npx ts-jest config:init
+- npm test
