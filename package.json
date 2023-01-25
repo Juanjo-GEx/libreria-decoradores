@@ -8,7 +8,7 @@
     "dist"
   ],
   "scripts": {
-    "build": "tsc run build:cjs && npm run build:esn",
+    "build": "npm run build:cjs && npm run build:esn",
     "build:cjs": "tsc --module commonjs --outDir dist/cjs",
     "build:esn": "tsc --module ES6 --outDir dist/esn"
   },

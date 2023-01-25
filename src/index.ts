@@ -5,7 +5,7 @@ export const logMethod = (
   descriptor: PropertyDescriptor
 ) => {
   const metodoOriginal = descriptor.value;
-  descriptor.value = (...args: any) => {
+  descriptor.value = function (...args: any[]) {
     console.log(
       `Se ha llamado al método ${propertyKey} con los parámetros ${JSON.stringify(
         args
