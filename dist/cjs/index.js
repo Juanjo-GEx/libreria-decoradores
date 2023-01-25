@@ -1,16 +1,10 @@
 "use strict";
-var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
-    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-    return c > 3 && r && Object.defineProperty(target, key, r), r;
-};
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.logMethod = void 0;
+exports.cacheableMethod = exports.measureTime = exports.logMethod = void 0;
 // 1- Loguear el método que se está llamando
 const logMethod = (target, propertyKey, descriptor) => {
     const metodoOriginal = descriptor.value;
-    descriptor.value = (...args) => {
+    descriptor.value = function (...args) {
         console.log(`Se ha llamado al método ${propertyKey} con los parámetros ${JSON.stringify(args)}`);
         const resultado = metodoOriginal.apply(this, args);
         console.log(`El método ha devuelto el siguiente valor ${resultado}`);
@@ -19,19 +13,53 @@ const logMethod = (target, propertyKey, descriptor) => {
 };
 exports.logMethod = logMethod;
 // 2- Medir el tiempo que tarda un método en ejecutarse
-// 3- Almacernar en caché la información de un valor
-class Cantante {
-    constructor(n, e) {
-        this.nombre = n;
-        this.estrofa = e;
-    }
-    canta() {
-        console.log(this.estrofa);
-        return this.estrofa;
-    }
-}
-__decorate([
-    exports.logMethod
-], Cantante.prototype, "canta", null);
-const miCantante = new Cantante("Kurt Cobain", "Load up on guns, bring your friends");
-miCantante.canta();
+const measureTime = (target, propertyKey, descriptor) => {
+    const metodoOriginal = descriptor.value;
+    descriptor.value = function (...args) {
+        const ahora = Date.now();
+        const resultado = metodoOriginal.apply(this, args);
+        const luego = Date.now();
+        console.log(`El método ${propertyKey} ha tardado ${luego - ahora} segundos`);
+        return resultado;
+    };
+};
+exports.measureTime = measureTime;
+const cacheableMethod = (cache) => {
+    return function (target, propertyKey, descriptor) {
+        const metodoOriginal = descriptor.value;
+        descriptor.value = function (...args) {
+            const key = JSON.stringify({ target, propertyKey, args });
+            if (cache[key]) {
+                console.log(`Estoy retornando el resultado cacheado para el método ${propertyKey}`);
+                return cache[key];
+            }
+            const resultado = metodoOriginal.apply(this, args);
+            cache[key] = resultado;
+            return resultado;
+        };
+    };
+};
+exports.cacheableMethod = cacheableMethod;
+// // Pruebas
+// const cache: CacheObject = {};
+// class Cantante {
+//   nombre: string;
+//   estrofa: string;
+//   constructor(n: string, e: string) {
+//     this.nombre = n;
+//     this.estrofa = e;
+//   }
+//   @measureTime
+//   @cacheableMethod(cache)
+//   canta() {
+//     console.log(this.estrofa);
+//     return this.estrofa;
+//   }
+// }
+// const miCantante = new Cantante(
+//   "Kurt Cobain",
+//   "Load up on guns, bring your friends"
+// );
+// miCantante.canta();
+// miCantante.canta();
+// miCantante.canta();
